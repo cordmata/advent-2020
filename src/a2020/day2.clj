@@ -6,7 +6,7 @@
   (let [[_ min max char password] (re-find #"(\d+)-(\d+) (.): (.*)" rule)]
     [(Integer/parseInt min) (Integer/parseInt max) (first char) password]))
 
-(def password_db
+(def gen-password-db
   (with-open [reps (io/reader (io/resource "password_db.txt"))]
     (map parse-rule (vec (line-seq reps)))))
 
@@ -19,8 +19,8 @@
         val2 (nth password (dec pos2) "")]
     (and (some #(= char %) [val1 val2]) (not= val1 val2)))) ;; ugh, I really don't like this but it works
 
-(defn part1 []
-  (count (filter password-matches-initial-requirements password_db)))
+(defn part1 [password-db]
+  (count (filter password-matches-initial-requirements password-db)))
 
-(defn part2 []
-  (count (filter password-matches-updated-requirements password_db)))
+(defn part2 [password-db]
+  (count (filter password-matches-updated-requirements password-db)))
