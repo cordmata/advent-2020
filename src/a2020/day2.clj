@@ -3,20 +3,24 @@
     [clojure.java.io :as io]))
 
 (defn parse-rule [rule]
-  (apply assoc {}
-         (interleave
-           [:min :max :char :password]
-           (rest (re-find (re-matcher #"(\d+)-(\d+) (.): (.*)" rule))))))
+  (let [[_ min max char password] (re-find #"(\d+)-(\d+) (.): (.*)" rule)]
+    [(Integer/parseInt min) (Integer/parseInt max) (first char) password]))
 
 (def password_db
   (with-open [reps (io/reader (io/resource "password_db.txt"))]
     (map parse-rule (vec (line-seq reps)))))
 
-(defn password-matches-requirements [password-rules]
-  (let
-    [occurrences (get (frequencies (:password password-rules)) (first (:char password-rules)) 0)]
-    (and (>= occurrences (Integer/parseInt (:min password-rules)))
-         (<= occurrences (Integer/parseInt (:max password-rules))))))
+(defn password-matches-initial-requirements [[min, max, char, password]]
+  (let [occurrences (get (frequencies password) char 0)]
+    (and (>= occurrences min) (<= occurrences max))))
+
+(defn password-matches-updated-requirements [[pos1, pos2, char, password]]
+  (let [val1 (nth password (dec pos1) "")
+        val2 (nth password (dec pos2) "")]
+    (and (some #(= char %) [val1 val2]) (not= val1 val2)))) ;; ugh, I really don't like this but it works
 
 (defn part1 []
-  (count (filter password-matches-requirements password_db)))
+  (count (filter password-matches-initial-requirements password_db)))
+
+(defn part2 []
+  (count (filter password-matches-updated-requirements password_db)))
