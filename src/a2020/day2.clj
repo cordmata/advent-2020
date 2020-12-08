@@ -1,12 +1,13 @@
 (ns a2020.day2
   (:require
+    [clojure.test :refer :all]
     [clojure.java.io :as io]))
 
 (defn parse-rule [rule]
   (let [[_ min max char password] (re-find #"(\d+)-(\d+) (.): (.*)" rule)]
     [(Integer/parseInt min) (Integer/parseInt max) (first char) password]))
 
-(def gen-password-db
+(def actual-password-db
   (with-open [reps (io/reader (io/resource "password_db.txt"))]
     (map parse-rule (vec (line-seq reps)))))
 
@@ -24,3 +25,19 @@
 
 (defn part2 [password-db]
   (count (filter password-matches-updated-requirements password-db)))
+
+(def input (map parse-rule ["1-3 a: abcde"
+                            "1-3 b: cdefg"
+                            "2-9 c: ccccccccc"]))
+
+(deftest test-day2
+  (testing "Part 1 example"
+    (is (= 2 (part1 input))))
+  (testing "Part 2 example"
+    (is (= 1 (part2 input))))
+  (testing "Part 1 actual"
+    (is (= 517 (part1 actual-password-db))))
+  (testing "Part 2 actual"
+    (is (= 284 (part2 actual-password-db)))))
+
+(run-tests)
