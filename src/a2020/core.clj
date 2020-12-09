@@ -2,7 +2,8 @@
   (:require
     a2020.day1
     a2020.day2
-    a2020.day3)
+    a2020.day3
+    a2020.day4)
   (:gen-class))
 
 (defn -main []
