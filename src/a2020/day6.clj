@@ -24,11 +24,13 @@
 (def actual-input (slurp (io/resource "customs_forms.txt")))
 
 (deftest test-part1
-  (is (= 11 (part1 example-input)))
-  (is (= 6551 (part1 actual-input))))
+  (are [x y] (= x (part1 y))
+    11 example-input
+    6551 actual-input))
 
 (deftest test-part2
-  (is (= 6 (part2 example-input)))
-  (is (= 3358 (part2 actual-input))))
+  (are [x y] (= x (part2 y))
+    6 example-input
+    3358 actual-input))
 
 (run-tests)
